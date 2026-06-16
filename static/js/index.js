@@ -3,7 +3,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const exportBtn = document.getElementById('export-btn');
   const notesContainer = document.getElementById('notes-container');
   const toastContainer = document.getElementById('toast-container');
+  const themeToggle = document.getElementById('theme-toggle');
   let currentEntries = [];
+
+  // Theme selector configuration
+  const currentTheme = localStorage.getItem('theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  if (currentTheme === 'light') {
+    themeToggle.checked = true;
+  }
+
+  themeToggle.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      document.documentElement.setAttribute('data-theme', 'light');
+      localStorage.setItem('theme', 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    }
+  });
 
   async function fetchNotes() {
     refreshBtn.classList.add('loading');
