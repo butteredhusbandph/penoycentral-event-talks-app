@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BigQuery Release Notes Tracker</title>
+  <meta name="description" content="Stay updated with the latest Google Cloud BigQuery release notes and instantly share updates to Twitter.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="logo-section">
+        <h1 id="app-title">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+          BigQuery Notes
+        </h1>
+      </div>
+      <div class="actions-section">
+        <button id="refresh-btn" class="btn btn-primary" aria-label="Refresh notes">
+          <span class="spinner"></span>
+          <span>Refresh Feed</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="instructions">
+      <p>💡 <strong>Tip:</strong> Browse through Google Cloud BigQuery release notes fetched directly from the official XML feed. Click <strong>"Tweet Update"</strong> on any card to prepare a ready-to-publish summary for your Twitter / X audience.</p>
+    </div>
+    
+    <div id="notes-container" class="notes-container">
+      <div class="empty-state">
+        <h3>Loading Release Notes...</h3>
+        <p>Connecting to the Google Cloud feed API.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; 2026 BigQuery Release Notes Web App. Built with Flask &amp; Modern Vanilla UI.</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>
