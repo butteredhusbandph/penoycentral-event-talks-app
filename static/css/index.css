@@ -111,14 +111,51 @@ header {
 .btn-tweet {
   background-color: var(--tweet-color);
   color: white;
-  margin-top: 1rem;
-  width: fit-content;
 }
 
 .btn-tweet:hover {
   background-color: var(--tweet-hover);
   box-shadow: 0 0 12px rgba(29, 155, 240, 0.3);
   transform: translateY(-1px);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+  flex-wrap: wrap;
+}
+
+/* Toast styling */
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.toast {
+  background-color: #10b981;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.2s forwards;
+  font-size: 0.9rem;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 main {

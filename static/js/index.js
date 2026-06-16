@@ -1,17 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
   const refreshBtn = document.getElementById('refresh-btn');
+  const exportBtn = document.getElementById('export-btn');
   const notesContainer = document.getElementById('notes-container');
+  const toastContainer = document.getElementById('toast-container');
+  let currentEntries = [];
 
   async function fetchNotes() {
     refreshBtn.classList.add('loading');
     refreshBtn.disabled = true;
+    exportBtn.style.display = 'none';
 
     try {
       const response = await fetch('/api/notes');
       const data = await response.json();
 
       if (data.success && data.entries && data.entries.length > 0) {
+        currentEntries = data.entries;
         renderNotes(data.entries);
+        exportBtn.style.display = 'inline-flex';
       } else {
         renderError(data.error || 'No release notes found in the feed.');
       }
@@ -51,18 +57,30 @@ document.addEventListener('DOMContentLoaded', () => {
           <span class="note-date">${escapeHtml(formattedDate)}</span>
         </div>
         <div class="note-content">${entry.content}</div>
-        <button class="btn btn-tweet" data-id="${escapeHtml(entry.id)}">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-          Tweet Update
-        </button>
+        <div class="card-actions">
+          <button class="btn btn-tweet" data-action="tweet">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+            </svg>
+            Tweet Update
+          </button>
+          <button class="btn btn-secondary" data-action="copy">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            Copy Info
+          </button>
+        </div>
       `;
 
-      // Attach tweet action
-      const tweetBtn = card.querySelector('.btn-tweet');
-      tweetBtn.addEventListener('click', () => {
+      // Attach button actions
+      card.querySelector('[data-action="tweet"]').addEventListener('click', () => {
         shareOnTwitter(entry);
+      });
+
+      card.querySelector('[data-action="copy"]').addEventListener('click', () => {
+        copyToClipboard(entry);
       });
 
       notesContainer.appendChild(card);
@@ -78,6 +96,59 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
   }
+
+  function copyToClipboard(entry) {
+    const formattedText = `BigQuery Update: ${entry.title}\nDate: ${entry.updated}\nLink: ${entry.link}\n\n${entry.plain_text}`;
+    navigator.clipboard.writeText(formattedText)
+      .then(() => showToast('Copied to clipboard!'))
+      .catch(() => showToast('Failed to copy.'));
+  }
+
+  function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    toastContainer.appendChild(toast);
+    
+    // Remove element after animation completes
+    setTimeout(() => {
+      toast.remove();
+    }, 2500);
+  }
+
+  function exportToCSV() {
+    if (currentEntries.length === 0) return;
+
+    // CSV headers
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "ID,Title,Updated Date,Link,Content Summary\r\n";
+
+    currentEntries.forEach(entry => {
+      // Clean content summary for CSV compatibility
+      const cleanSummary = (entry.plain_text || '')
+        .replace(/"/g, '""')
+        .replace(/\r?\n|\r/g, ' ');
+
+      const row = [
+        `"${entry.id.replace(/"/g, '""')}"`,
+        `"${entry.title.replace(/"/g, '""')}"`,
+        `"${entry.updated.replace(/"/g, '""')}"`,
+        `"${entry.link.replace(/"/g, '""')}"`,
+        `"${cleanSummary}"`
+      ].join(",");
+
+      csvContent += row + "\r\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `bigquery_release_notes_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
 
   function shareOnTwitter(entry) {
     // Construct clean tweet text
@@ -120,5 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial Load
   refreshBtn.addEventListener('click', fetchNotes);
+  exportBtn.addEventListener('click', exportToCSV);
   fetchNotes();
 });

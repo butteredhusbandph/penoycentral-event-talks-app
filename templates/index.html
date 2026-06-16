@@ -29,6 +29,14 @@
         </h1>
       </div>
       <div class="actions-section">
+        <button id="export-btn" class="btn btn-secondary" style="display: none;" aria-label="Export notes to CSV">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Export CSV
+        </button>
         <button id="refresh-btn" class="btn btn-primary" aria-label="Refresh notes">
           <span class="spinner"></span>
           <span>Refresh Feed</span>
@@ -38,6 +46,7 @@
   </header>
 
   <main>
+    <div id="toast-container" class="toast-container"></div>
     <div class="instructions">
       <p>💡 <strong>Tip:</strong> Browse through Google Cloud BigQuery release notes fetched directly from the official XML feed. Click <strong>"Tweet Update"</strong> on any card to prepare a ready-to-publish summary for your Twitter / X audience.</p>
     </div>
